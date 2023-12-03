@@ -2,11 +2,8 @@
 // Brandon Jennings       //
 // Computer Organization  //
 // Project 2              //
+// Banker's Algorithm     //
 // ////////////////////// //
-
-#include <iostream>
-#include <string>
-
 /*
 Allocation:
 A B C
@@ -30,10 +27,9 @@ Available:
 Is the system in a safe state? If Yes, what is the safe sequence?
 */
 
-// Available Array // (allocation + available) when Need <= Available
-// Max Array
-// Allocation Array 
-// Need Array // (max - allocation)
+#include <iostream>
+#include <string>
+#include <array>
 
 std::string allocation[5] = {"010", "200", "302", "211", "002"};
 std::string max[5] = {"753", "322", "902", "222", "433"};
@@ -42,6 +38,8 @@ std::string need[5];
 std::string safeOrder[5];
 
 int main(){
+
+    // Populating need array
     for(int i = 0; i < 5; ++i) {
     	int tmpMax, tmpAlloc, tmpTotal;
         for(int j = 0; j < 3; ++j) {
@@ -51,46 +49,76 @@ int main(){
             need[i] += tmpTotal + 48;
         }
     }
-    
-    bool safe = false;
-    int orderItr = 0;
-    std::string tmp = "";
-    
-    for(int i = 0; i < 5; ++i) {
-    	safe = true;
-        std::cout << allocation[i] << std::endl;
-        std::cout << available[i] << std::endl;
-        std::cout << need[i] << std::endl;
-        for(int j = 0; j < 3; ++j) {
-            if (need[i][j] <= available[i][j]) {
-                std::cout << "True" << std::endl;
-            } else {
-                std::cout << "False" << std::endl;
-                safe = false;
-            }
-        }
-        
-        if (!safe) {
-            available[i+1] = available[i]; 
-        } else {
-            available[i+1] = std::to_string(std::stoi(available[i]) + std::stoi(allocation[i]));
-            
-            tmp = "P" + std::to_string(i);
-            
-            safeOrder[orderItr] = tmp;
-            ++orderItr;
-        }
-    }
 
-    std::cout << std::endl;
+    bool safe = false, run = true, keepRunning = true;
+    int orderItr = 0, loopItr = 0;
+    std::string processNum = "", availableCarry = "";
+    availableCarry = available[0];
+
+    // Loops until done running
+    // Stop running when every remaining resource is not safe
+    while (keepRunning) {
     
+        // Prevents infinite looping on 0 safe possibilities
+        if (loopItr != 0 && orderItr == 0) keepRunning = false;
+        
+        // Prevents infinite looping if state is unsafe
+        if (orderItr != 0) {
+            ++loopItr;
+            if (loopItr > 5) keepRunning = false;
+        }
+    
+    	// Stops running when state is determined safe or unsafe
+        if (orderItr == 5){
+            keepRunning = false;
+        }
+    
+        // Calculating need vs available / Order of processes    
+        for(int i = 0; i < 5; ++i) {
+    
+            processNum = "P" + std::to_string(i);
+    	    safe = true;
+    	    run = true;
+        
+            // Determines if a process should be skipped
+            for(int j = 0; j < orderItr; ++j) {
+                if(safeOrder[j] == processNum) run = false;
+            }
+        
+            // Skips the algorithm if it doesn't need run
+            if(run){
+                // Assigns correct available resource number
+            	available[i] = availableCarry;
+            
+                // Determining if the state is safe for this process
+                for(int j = 0; j < 3; ++j) {
+                    if (need[i][j] > available[i][j]) {
+                        safe = false;
+                    }
+                }
+       
+        	
+                // Storing process number order
+                if (safe) {
+                    safeOrder[orderItr] = processNum;
+                    ++orderItr;
+                    
+                    availableCarry = std::to_string(std::stoi(available[i]) + std::stoi(allocation[i]));
+                }
+            }
+        }   
+    }
+    
+    // Printing safe order if the system is safe
     if (!safe){
         std::cout << "The system is not in a safe state" << std::endl;
     } else {
-        std::cout << "The safe order is: ";
+        std::cout << "The system is in a safe state." << std::endl;
+        std::cout << "The safe order is: < ";
         for (int i = 0; i < orderItr; ++i){
             std::cout << safeOrder[i] << " ";
         }
+        std::cout << ">" << std::endl;
     }
     
     return 0;
