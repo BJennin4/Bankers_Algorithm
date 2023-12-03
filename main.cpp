@@ -1,4 +1,11 @@
+// ////////////////////// //
+// Brandon Jennings       //
+// Computer Organization  //
+// Project 2              //
+// ////////////////////// //
+
 #include <iostream>
+#include <string>
 
 /*
 Allocation:
@@ -28,19 +35,62 @@ Is the system in a safe state? If Yes, what is the safe sequence?
 // Allocation Array 
 // Need Array // (max - allocation)
 
-string allocation[5] = {"010", "200", "302", "211", "002"};
-string max[5] = {"753", "322", "902", "222", "433"};
-string available[1] = {"332"};
-
-int recA = 12, recB = 5, recC = 7;
+std::string allocation[5] = {"010", "200", "302", "211", "002"};
+std::string max[5] = {"753", "322", "902", "222", "433"};
+std::string available[5] = {"332"};
+std::string need[5];
+std::string safeOrder[5];
 
 int main(){
+    for(int i = 0; i < 5; ++i) {
+    	int tmpMax, tmpAlloc, tmpTotal;
+        for(int j = 0; j < 3; ++j) {
+            tmpMax = max[i][j] - 48;
+            tmpAlloc = allocation[i][j] - 48;
+            tmpTotal = tmpMax - tmpAlloc;
+            need[i] += tmpTotal + 48;
+        }
+    }
+    
     bool safe = false;
+    int orderItr = 0;
+    std::string tmp = "";
     
-    
+    for(int i = 0; i < 5; ++i) {
+    	safe = true;
+        std::cout << allocation[i] << std::endl;
+        std::cout << available[i] << std::endl;
+        std::cout << need[i] << std::endl;
+        for(int j = 0; j < 3; ++j) {
+            if (need[i][j] <= available[i][j]) {
+                std::cout << "True" << std::endl;
+            } else {
+                std::cout << "False" << std::endl;
+                safe = false;
+            }
+        }
+        
+        if (!safe) {
+            available[i+1] = available[i]; 
+        } else {
+            available[i+1] = std::to_string(std::stoi(available[i]) + std::stoi(allocation[i]));
+            
+            tmp = "P" + std::to_string(i);
+            
+            safeOrder[orderItr] = tmp;
+            ++orderItr;
+        }
+    }
+
+    std::cout << std::endl;
     
     if (!safe){
-        std::cout << "The system is not in a safe state";
+        std::cout << "The system is not in a safe state" << std::endl;
+    } else {
+        std::cout << "The safe order is: ";
+        for (int i = 0; i < orderItr; ++i){
+            std::cout << safeOrder[i] << " ";
+        }
     }
     
     return 0;
