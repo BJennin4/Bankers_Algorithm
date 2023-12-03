@@ -29,15 +29,57 @@ Is the system in a safe state? If Yes, what is the safe sequence?
 
 #include <iostream>
 #include <string>
-#include <array>
+#include <fstream>
 
-std::string allocation[5] = {"010", "200", "302", "211", "002"};
-std::string max[5] = {"753", "322", "902", "222", "433"};
-std::string available[5] = {"332"};
+// std::string allocation[5] = {"010", "200", "302", "211", "002"};
+std::string allocation[5];
+// std::string max[5] = {"753", "322", "902", "222", "433"};
+std::string max[5];
+// std::string available[5] = {"332"};
+std::string available[5];
 std::string need[5];
 std::string safeOrder[5];
 
 int main(){
+    std::string textLine;
+    std::ifstream dataFile("data_table.txt");
+       
+    size_t stringPos; 
+    int lineNum = 0, fileItr; // Allocation, Max, Available
+     
+    if(dataFile.is_open()){
+        while(getline(dataFile,textLine)) { 
+            stringPos = 0;
+            fileItr = 0;
+            
+            // Reading data into arrays
+            while(stringPos < (textLine.size() - 3)) {
+                stringPos = textLine.find(" ", stringPos);
+                ++stringPos;
+                
+                switch (lineNum) {
+                    case 0:
+                        allocation[fileItr] = textLine.substr(stringPos, 3);
+                        break;
+                    case 1:
+                        max[fileItr] = textLine.substr(stringPos, 3);
+                        break;
+                    case 2:
+                        available[fileItr] = textLine.substr(stringPos, 3);
+                        break;
+                    default:
+                        break;
+                }
+                ++fileItr;
+            }
+            
+            std::cout << textLine << std::endl;
+            ++lineNum;
+        }
+        dataFile.close();
+    } else {
+        std::cout << "Unable to open file";
+    }
 
     // Populating need array
     for(int i = 0; i < 5; ++i) {
