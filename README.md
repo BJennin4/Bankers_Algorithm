@@ -5,5 +5,8 @@ This program reads in an included text file, formatted to give allocation and ma
 
 
 ## Example Output
-
-<img width="173" alt="image" src="https://github.com/BJennin4/Bankers_Algorithm/assets/68445378/c26fa719-f4a7-43f7-b5b5-d9275a8ddbd3">
+>allocation: 010 200 302 211 002
+>max: 753 322 902 222 433
+>available: 332
+>The system is in a safe state.
+>The safe order is: < P1 P3 P4 P0 P2 >
