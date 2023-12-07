@@ -5,8 +5,8 @@ This program reads in an included text file, formatted to give allocation and ma
 
 
 ## Example Output
->allocation: 010 200 302 211 002
->max: 753 322 902 222 433
->available: 332
->The system is in a safe state.
->The safe order is: < P1 P3 P4 P0 P2 >
+>allocation: 010 200 302 211 002 \
+>max: 753 322 902 222 433 \
+>available: 332 \
+>The system is in a safe state. \
+>The safe order is: < P1 P3 P4 P0 P2 > \
